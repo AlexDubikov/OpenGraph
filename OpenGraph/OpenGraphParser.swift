@@ -30,7 +30,7 @@ extension OpenGraphParser {
         
         // create attribute dictionary
         let nsString = htmlString as NSString
-        let attributes = metaTagMatches.reduce([OpenGraphMetadata: String]()) { (attributes, result) -> [OpenGraphMetadata: String] in
+        var attributes = metaTagMatches.reduce([OpenGraphMetadata: String]()) { (attributes, result) -> [OpenGraphMetadata: String] in
             var copiedAttributes = attributes
             
             let property = { () -> (name: String, content: String)? in
@@ -61,6 +61,20 @@ extension OpenGraphParser {
             }
             return copiedAttributes
         }
+        
+        let nameRegex  = try! NSRegularExpression(
+            pattern: "(name...)[^:]*(descr)"
+        )
+        
+        let nameMatches = nameRegex.matches(in: htmlString,
+                                            options: [],
+                                            range: NSMakeRange(0, htmlString.count))
+        
+        if let nameMatch = nameMatches.first,
+            let range = Range(nameMatch.range, in: htmlString) {
+            attributes[.figmaFileName] = String(htmlString[range])
+        }
+
         
         return attributes
     }
