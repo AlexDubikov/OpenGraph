@@ -72,9 +72,16 @@ extension OpenGraphParser {
         
         if let nameMatch = nameMatches.first,
             let range = Range(nameMatch.range, in: htmlString) {
-            attributes[.figmaFileName] = String(htmlString[range])
-        }
+            
+            let rawNameString = String(htmlString[range])
 
+            let start = rawNameString.index(rawNameString.startIndex, offsetBy: 7)
+            let end = rawNameString.index(rawNameString.endIndex, offsetBy: -8)
+            
+            let nameRange = start..<end
+            
+            attributes[.figmaFileName] = String(rawNameString[nameRange])
+        }
         
         return attributes
     }
