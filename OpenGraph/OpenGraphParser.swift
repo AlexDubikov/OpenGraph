@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 public protocol OpenGraphParser {
     func parse(htmlString: String) -> [OpenGraphMetadata: String]
@@ -79,8 +80,13 @@ extension OpenGraphParser {
             let end = rawNameString.index(rawNameString.endIndex, offsetBy: -8)
             
             let nameRange = start..<end
+            let raw = String(rawNameString[nameRange])
             
-            attributes[.figmaFileName] = String(rawNameString[nameRange])
+            let mutable = NSMutableString(string: raw)
+            CFStringTransform( mutable, nil, "Any-Hex/Java" as NSString, true )
+            let name = String(mutable)
+            
+            attributes[.figmaFileName] = name
         }
         
         return attributes
